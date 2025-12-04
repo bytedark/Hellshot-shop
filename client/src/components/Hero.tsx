@@ -4,18 +4,9 @@ import { Crosshair } from "lucide-react";
 import logoUrl from '@assets/99E92385-AEB2-4B23-B33B-B4F17935BE6E_1764737355196.png';
 
 export function Hero() {
-  // Função segura para scroll — funciona sempre
-  const scrollToSection = (id: string) => {
-    setTimeout(() => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 20); // pequeno delay para garantir DOM carregado
-  };
-
   return (
     <div className="relative overflow-hidden bg-background pt-10 pb-20 lg:pt-20 lg:pb-32">
+      
       {/* Grid Background */}
       <div className="absolute inset-0 bg-grid-pattern opacity-20" />
 
@@ -28,7 +19,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Logo */}
+          {/* LOGO */}
           <div className="flex justify-center mb-8">
             <img
               src={logoUrl}
@@ -37,13 +28,13 @@ export function Hero() {
             />
           </div>
 
-          {/* Badge */}
+          {/* BADGE */}
           <div className="inline-flex items-center rounded-full border border-neon-red/30 bg-neon-red/10 px-3 py-1 text-sm font-medium text-neon-red backdrop-blur-sm mb-6">
             <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-neon-red" />
             Desconto válido até hoje
           </div>
 
-          {/* Title */}
+          {/* TITLE */}
           <h1 className="mx-auto max-w-4xl font-display text-5xl font-black uppercase tracking-tighter text-white sm:text-6xl md:text-7xl lg:text-8xl">
             Melhore Sua{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-red to-red-600 text-glow-red">
@@ -53,34 +44,37 @@ export function Hero() {
             Hoje Mesmo!
           </h1>
 
-          {/* Subtitle */}
+          {/* SUBTITLE */}
           <p className="mx-auto mt-6 max-w-2xl font-sans text-lg text-muted-foreground sm:text-xl">
-            Quer vencer todos os X1s e ser o destaque da sua squad? Essa é a
-            ferramenta que você precisa para dominar o jogo.
+            Quer vencer todos os X1s e ser o destaque da sua squad? Essa é a ferramenta que você precisa para dominar o jogo.
           </p>
 
-          {/* Buttons */}
+          {/* BUTTONS */}
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            
+            {/* BOTÃO 1 — VAI PARA O PRICING */}
             <Button
               size="lg"
               className="h-14 w-full bg-neon-red px-8 text-lg font-bold text-white hover:bg-neon-red/90 sm:w-auto shadow-[0_0_20px_rgba(255,0,0,0.4)] border border-red-500"
-              onClick={() => scrollToSection("pricing")}
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <Crosshair className="mr-2 h-5 w-5" />
               QUERO DAR SÓ CAPA
             </Button>
 
+            {/* BOTÃO 2 — VAI PARA O VÍDEO */}
             <Button
               variant="outline"
               size="lg"
               className="h-14 w-full border-white/20 bg-white/5 text-lg backdrop-blur-sm hover:bg-white/10 hover:text-neon-red hover:border-neon-red/50 sm:w-auto"
-              onClick={() => scrollToSection("video-section")}
+              onClick={() => document.getElementById('video-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Ver como funciona
             </Button>
+
           </div>
 
-          {/* Stats */}
+          {/* STATS */}
           <div className="mt-12 flex items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <div className="h-1.5 w-1.5 rounded-full bg-neon-red" />
@@ -91,6 +85,7 @@ export function Hero() {
               100% Anti-Ban
             </div>
           </div>
+
         </motion.div>
       </div>
     </div>
