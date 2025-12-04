@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, Settings, Maximize, Captions, MoreHorizontal } from "lucide-react";
 
-export function VideoSection() {
+export default function VideoSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [finished, setFinished] = useState(false);
 
