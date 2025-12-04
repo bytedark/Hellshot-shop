@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Play, Settings, Maximize, Captions, MoreHorizontal } from "lucide-react";
 import { useRef, useState } from "react";
 
-export function VideoSection() {
+export default function VideoSection() {
   const videos = import.meta.glob("/src/assets/videos/*", { eager: true });
   const videoFile = Object.values(videos)[0] as any;
 
