@@ -1,140 +1,136 @@
-import { useRef, useState, useEffect } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react";
+import { motion } from "framer-motion";
+import { Play, Settings, Maximize, Captions, MoreHorizontal } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-// Importa automaticamente qualquer vídeo da pasta
-const videos = import.meta.glob("/src/assets/videos/*", { eager: true });
+export function VideoSection() {
+  // Carregar vídeo automaticamente da pasta
+  const videos = import.meta.glob("/src/assets/videos/*", { eager: true });
+  const videoFile = Object.values(videos)[0] as any; // primeiro vídeo da pasta
 
-export default function VideoSection() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  // Pega o primeiro vídeo encontrado automaticamente
-  const videoSrc = Object.values(videos)[0] as { default: string };
-
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
 
-  // Play / pause
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-
-    if (isPlaying) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play();
-    }
-
-    setIsPlaying(!isPlaying);
-  };
-
-  // Volume
-  const toggleMute = () => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
-  };
-
-  // Fullscreen
-  const toggleFullscreen = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.requestFullscreen) {
-      videoRef.current.requestFullscreen();
-    }
-  };
-
-  // Atualiza progresso
+  // Atualizar barra de progresso
   const handleTimeUpdate = () => {
     if (!videoRef.current) return;
-    setProgress(videoRef.current.currentTime);
+    const p = (videoRef.current.currentTime / videoRef.current.duration) * 100;
+    setProgress(p);
   };
 
-  // Atualiza duração
-  const handleLoadedMetadata = () => {
+  // Play/pause
+  const togglePlay = () => {
     if (!videoRef.current) return;
-    setDuration(videoRef.current.duration);
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
   };
 
-  // Ao clicar na barra de progresso
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Clicar na progress bar
+  const handleSeek = (e: any) => {
     if (!videoRef.current) return;
-    const newTime = Number(e.target.value);
-    videoRef.current.currentTime = newTime;
-    setProgress(newTime);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const percent = clickX / rect.width;
+    videoRef.current.currentTime = percent * videoRef.current.duration;
   };
 
   return (
-    <section className="w-full py-16 bg-black flex justify-center">
-      <div className="max-w-4xl w-full rounded-2xl bg-black border border-red-600 shadow-[0_0_25px_#ff0000] overflow-hidden p-4 relative">
+    <section id="video-section" className="py-20 bg-black/50">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="mx-auto max-w-5xl overflow-hidden rounded-xl shadow-2xl shadow-neon-red/20 bg-black relative group"
+        >
+          {/* Video Container */}
+          <div className="relative aspect-video w-full bg-black flex items-center justify-center">
 
-        {/* Vídeo */}
-        <div className="relative w-full h-[350px] rounded-xl overflow-hidden">
-          <video
-            ref={videoRef}
-            src={videoSrc?.default}
-            className="w-full h-full object-cover"
-            onTimeUpdate={handleTimeUpdate}
-            onLoadedMetadata={handleLoadedMetadata}
-          />
+            {/* VIDEO REAL */}
+            <video
+              ref={videoRef}
+              src={videoFile.default}
+              className="absolute inset-0 w-full h-full object-cover"
+              onTimeUpdate={handleTimeUpdate}
+            />
 
-          {/* Overlay escuro */}
-          <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+            {/* OVERLAY */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60 z-10 pointer-events-none" />
 
-          {/* Botão Play/Pause central */}
-          <button
-            onClick={togglePlay}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            {!isPlaying ? (
-              <Play size={70} className="text-red-500 drop-shadow-[0_0_15px_#ff0000]" />
-            ) : (
-              <Pause size={70} className="text-red-500 drop-shadow-[0_0_15px_#ff0000]" />
+            {/* BIG PLAY BUTTON */}
+            {!isPlaying && (
+              <div
+                onClick={togglePlay}
+                className="relative z-20 h-20 w-20 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm cursor-pointer hover:scale-110 transition-transform duration-300 border border-white/10"
+              >
+                <Play className="h-8 w-8 text-white fill-white ml-1" />
+              </div>
             )}
-          </button>
-        </div>
 
-        {/* Controles */}
-        <div className="mt-4 flex flex-col gap-3">
+            {/* PLAYER CONTROLS */}
+            <div className="absolute bottom-0 left-0 right-0 z-30 px-4 pb-2 pt-12 bg-gradient-to-t from-black/90 to-transparent">
 
-          {/* Barra de progresso */}
-          <input
-            type="range"
-            min={0}
-            max={duration}
-            value={progress}
-            onChange={handleSeek}
-            className="w-full accent-red-600 cursor-pointer"
-          />
+              {/* PROGRESS BAR */}
+              <div
+                className="w-full h-1 bg-white/20 rounded-full mb-4 cursor-pointer group/progress"
+                onClick={handleSeek}
+              >
+                <div
+                  className="h-full bg-neon-red rounded-full relative"
+                  style={{ width: `${progress}%` }}
+                >
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3 w-3 bg-white rounded-full opacity-0 group-hover/progress:opacity-100 transition-opacity" />
+                </div>
+              </div>
 
-          {/* Linha de botões */}
-          <div className="flex justify-between items-center">
+              {/* CONTROL BAR */}
+              <div className="flex items-center justify-between h-12 rounded-full bg-neon-red/90 backdrop-blur-md px-4 sm:px-6">
 
-            {/* Play/Pause */}
-            <button
-              onClick={togglePlay}
-              className="p-3 bg-red-600 rounded-lg shadow-[0_0_10px_#ff0000]"
-            >
-              {isPlaying ? <Pause size={22} /> : <Play size={22} />}
-            </button>
+                {/* Left Branding */}
+                <div className="flex items-center">
+                  <div className="h-8 w-8 rounded-full border-2 border-white/20 flex items-center justify-center bg-black/20">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5 text-white fill-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                    </svg>
+                  </div>
+                </div>
 
-            {/* Mute */}
-            <button
-              onClick={toggleMute}
-              className="p-3 bg-red-600 rounded-lg shadow-[0_0_10px_#ff0000]"
-            >
-              {isMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
-            </button>
+                {/* (Empty center, igual ao seu código) */}
+                <div className="flex items-center gap-6 text-white">
+                  <button className="hover:text-white/80 transition-colors font-bold text-xs sm:text-sm uppercase tracking-wider"></button>
+                </div>
 
-            {/* Fullscreen */}
-            <button
-              onClick={toggleFullscreen}
-              className="p-3 bg-red-600 rounded-lg shadow-[0_0_10px_#ff0000]"
-            >
-              <Maximize size={22} />
-            </button>
-
+                {/* Right Side Icons */}
+                <div className="flex items-center gap-3 sm:gap-4 text-white">
+                  <button className="hover:scale-110 transition-transform p-1">
+                    <Captions className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                  <button className="hover:scale-110 transition-transform p-1">
+                    <Settings className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                  <button
+                    onClick={() => videoRef.current?.requestFullscreen()}
+                    className="hover:scale-110 transition-transform p-1"
+                  >
+                    <Maximize className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                  <button className="hover:scale-110 transition-transform p-1">
+                    <MoreHorizontal className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
