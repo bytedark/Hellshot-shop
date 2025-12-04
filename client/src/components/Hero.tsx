@@ -49,7 +49,7 @@ export function Hero() {
               variant="outline" 
               size="lg" 
               className="h-14 w-full border-white/20 bg-white/5 text-lg backdrop-blur-sm hover:bg-white/10 hover:text-neon-red hover:border-neon-red/50 sm:w-auto"
-              onClick={() => document.getElementById('video-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.querySelector('#video-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Ver como funciona
             </Button>
