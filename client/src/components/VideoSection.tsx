@@ -6,26 +6,19 @@ export default function VideoSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [finished, setFinished] = useState(false);
 
-  // Rolagem até o pricing
   const scrollToPricing = () => {
-    const pricing = document.getElementById("pricing-section");
-    if (pricing) {
-      pricing.scrollIntoView({ behavior: "smooth" });
-    }
+    const el = document.getElementById("pricing");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Quando clicar no play
   const handlePlay = () => {
     videoRef.current?.play();
   };
 
-  // Detectar final mesmo se o usuário PULAR a linha do tempo
   const handleTimeUpdate = () => {
     if (!videoRef.current) return;
-
     const vid = videoRef.current;
 
-    // Se estiver nos 1,5 segundos finais → vídeo considerado concluído
     if (vid.currentTime >= vid.duration - 1.5) {
       setFinished(true);
     }
@@ -33,7 +26,6 @@ export default function VideoSection() {
 
   return (
     <section id="video-section" className="py-20 bg-black/50">
-      
       <h2 className="text-center text-3xl md:text-4xl font-extrabold text-red-500 mb-10 tracking-wide">
         ASSISTA O VÍDEO SECRETO
       </h2>
@@ -45,7 +37,6 @@ export default function VideoSection() {
           viewport={{ once: true }}
           className="mx-auto max-w-5xl overflow-hidden rounded-xl shadow-2xl shadow-neon-red/20 bg-black relative group"
         >
-          {/* VIDEO */}
           <div className="relative aspect-video w-full bg-black flex items-center justify-center">
 
             <video
@@ -53,10 +44,9 @@ export default function VideoSection() {
               src="/video.mp4"
               className="w-full h-full object-cover"
               onTimeUpdate={handleTimeUpdate}
-              onEnded={() => setFinished(true)} 
+              onEnded={() => setFinished(true)}
             />
 
-            {/* Botão de Play */}
             <div
               onClick={handlePlay}
               className="absolute inset-0 flex items-center justify-center cursor-pointer z-20"
@@ -66,7 +56,6 @@ export default function VideoSection() {
               </div>
             </div>
 
-            {/* Controles Fakes */}
             <div className="absolute bottom-0 left-0 right-0 z-30 px-4 pb-2 pt-12 bg-gradient-to-t from-black/90 to-transparent">
               <div className="w-full h-1 bg-white/20 rounded-full mb-4">
                 <div className="h-full w-[35%] bg-neon-red rounded-full" />
@@ -92,7 +81,6 @@ export default function VideoSection() {
           </div>
         </motion.div>
 
-        {/* BOTÃO QUE APARECE QUANDO O VÍDEO TERMINA */}
         {finished && (
           <div className="flex justify-center mt-10">
             <button
